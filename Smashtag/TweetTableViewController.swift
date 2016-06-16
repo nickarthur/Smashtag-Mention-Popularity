@@ -7,16 +7,12 @@
 //
 
 import UIKit
-import Twitter
 
-
-class TweetTableViewController: UITableViewController, UITextFieldDelegate {
+class TweetTableViewController: UITableViewController, UITextFieldDelegate
+{
+	private var tweets = [Array<Tweet>]()
 	
-	private var tweets = [Array<Tweet>]() {
-		didSet {
-			tableView.reloadData()
-		}
-	}
+	var searchTextFromSegue: String?
 	
 	private var searchText: String? {
 		didSet {
@@ -25,9 +21,9 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate {
 				searchTextField.text = recentSearchKeys.last
 				return
 			}
-			recentSearchKeys.addSearchKey(searchText)
 			tweets.removeAll()
-			searchForTweets()
+			lastTwitterRequest = nil
+			refreshTweetsTable()
 			title = searchText
 			searchTextField.text = searchText
 		}
@@ -35,46 +31,40 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate {
 	
 	private struct Constants {
 		static let SegueIdentifierToMentions = "ToMentions"
+		static let SegueIdentifierToCollectionView = "toCollectionViewOfImages"
 		static let TweetCellIdentifier = "Tweet"
 	}
 	
-	private var twitterRequest: Request? {
-		if let query = searchText where !query.isEmpty {
-			return Request(search: query + " -filter:retweets", count: 100)
-		}
-		return nil
-	}
-	
-	private var lastTwitterRequest: Request?
 
-	private func searchForTweets() {
-		if let request = twitterRequest {
-			lastTwitterRequest = request
-			request.fetchTweets { [weak weakSelf = self] newTweets in
-				dispatch_async(dispatch_get_main_queue()) {
-					if request == weakSelf?.lastTwitterRequest {
-						if !newTweets.isEmpty {
-							weakSelf?.tweets.insert(newTweets, atIndex: 0)
-						}
-					}
-				}
-			}
-		}
-	}
-	
     override func viewDidLoad() {
         super.viewDidLoad()
 		tableView.estimatedRowHeight = tableView.rowHeight  // storyboard..
 		tableView.rowHeight = UITableViewAutomaticDimension
-    }
-	
-	override func viewWillAppear(animated: Bool) {
-		let mostRecentSearchKey = recentSearchKeys.last
-		if searchText != mostRecentSearchKey {
+		
+		if navigationController?.viewControllers.count > 1 {
+			let stopBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Stop,
+							target: self,
+							action: #selector(TweetTableViewController.popToRootViewController(_:)))
+			
+			if let rightBarButtonItem = navigationItem.rightBarButtonItem {
+				navigationItem.rightBarButtonItems = [stopBarButtonItem, rightBarButtonItem]
+			} else {
+				navigationItem.rightBarButtonItem = stopBarButtonItem
+			}
+			
+		}
+		
+		if let searchText = searchTextFromSegue {
+			self.searchText = searchText
+			searchTextFromSegue = nil
+			// media item button...
+			navigationItem.rightBarButtonItems?.removeLast()
+			
+		} else {
+			let mostRecentSearchKey = recentSearchKeys.last
 			searchText = mostRecentSearchKey
 		}
-	}
-
+    }
 
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -95,6 +85,12 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate {
         return cell
     }
  
+	// MARK: tableView delegate method
+	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+	{	tweetForSegue = tweets[indexPath.section][indexPath.row]
+		performSegueWithIdentifier(Constants.SegueIdentifierToMentions, sender: self)
+	}
+	
 	@IBOutlet private weak var searchTextField: UITextField! {
 		didSet {
 			searchTextField.delegate = self
@@ -102,17 +98,57 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate {
 		}
 	}
 	
+	// MARK: UITextFieldDelegate method
 	func textFieldShouldReturn(textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		searchText = textField.text
+		recentSearchKeys.addSearchKey(searchText!)
 		return true
 	}
 	
-	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-	{	tweetForSegue = tweets[indexPath.section][indexPath.row]
-		performSegueWithIdentifier(Constants.SegueIdentifierToMentions, sender: self)
+	
+	private var lastTwitterRequest: Request?
+	private var twitterRequest: Request? {
+		if lastTwitterRequest == nil {
+			if let query = searchText where !query.isEmpty {
+				return Request(search: query + " -filter:retweets", count: 100)
+			}
+			return nil
+		} else {
+			return lastTwitterRequest!.requestForNewer
+		}
 	}
-
+	
+	// MARK: - Refreshing the tweetsTable(View)
+	@IBAction private func refreshTweetsTable(sender: UIRefreshControl?) {
+		guard searchText != nil else {
+			sender?.endRefreshing()
+			return
+		}
+		guard let request = twitterRequest else { return }
+		lastTwitterRequest = request
+		request.fetchTweets { [weak weakSelf = self] newTweets in
+			dispatch_async(dispatch_get_main_queue()) {
+				if newTweets.count > 0 {
+					weakSelf?.tweets.insert(newTweets, atIndex: 0)
+					weakSelf?.tableView.reloadData()
+					weakSelf?.tableView.reloadSections(NSIndexSet(indexesInRange:
+						NSMakeRange(0, self.tableView.numberOfSections)),
+						withRowAnimation: .None)
+					sender?.endRefreshing()
+					self.title = self.searchText
+				}
+				sender?.endRefreshing()
+			}
+		}
+	}
+	
+	private func refreshTweetsTable() {
+		refreshControl?.beginRefreshing()
+		refreshTweetsTable(refreshControl)
+	}
+	
+	// MARK: Segue methods and property
 	private var tweetForSegue: Tweet?
 	
 	override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
@@ -123,17 +159,27 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate {
 	}
 	
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
-	{	guard let identifier = segue.identifier where identifier == Constants.SegueIdentifierToMentions
-		else { return }
-		if var vc = segue.destinationViewController.contentViewController as? NeedsTweet {
-			vc.tweet = tweetForSegue
-			tweetForSegue = nil
+	{	guard let identifier = segue.identifier else { return }
+		let destinationVC = segue.destinationViewController.contentViewController
+		switch identifier {
+		case Constants.SegueIdentifierToMentions:
+			if var vc = destinationVC as? NeedsTweet {
+				vc.tweet = tweetForSegue
+				tweetForSegue = nil
+			}
+		case Constants.SegueIdentifierToCollectionView:
+			if let vc = destinationVC as? NeedsTweets {
+				vc.tweets = tweets
+			}
+		default: break
 		}
-		
+	}
+
+	func popToRootViewController(sender: UIBarButtonItem) {
+		navigationController?.popToRootViewControllerAnimated(true)
 	}
 
 }
-
 extension UIViewController
 {
 	var contentViewController: UIViewController? {
@@ -143,4 +189,6 @@ extension UIViewController
 			return self
 		}
 	}
+	
+
 }

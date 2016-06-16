@@ -13,9 +13,7 @@ private struct Constants {
 	static let KeyForRecentSearches = "RecentSearchKeys"
 	static let cellReuseIdentifier = "Recents"
 	static let SegueToMainTweetTableView = "ToMainTweetTableView"
-
 }
-
 
 class RecentSearchKeys {
 	subscript(index: Int) -> String {
@@ -36,7 +34,7 @@ class RecentSearchKeys {
 	
 	func addSearchKey(key: String) {
 		for index in 0..<searchKeys.count
-		{	if key == searchKeys[index] {
+		{	if key.lowercaseString == searchKeys[index].lowercaseString {
 			searchKeys.removeAtIndex(index)
 			break
 			}
@@ -54,6 +52,15 @@ class RecentSearchKeys {
 	func removeAtIndex(index: Int) {
 		if count > index {
 			searchKeys.removeAtIndex(index)
+		}
+	}
+	
+	func remove(key: String) {
+		for index in 0..<searchKeys.count
+		{	if key.lowercaseString == searchKeys[index].lowercaseString {
+			searchKeys.removeAtIndex(index)
+			return
+			}
 		}
 	}
 	
@@ -120,6 +127,6 @@ class RecentsTableViewController: UITableViewController {
 		let key = recentSearchKeys[indexPath.row]
 		recentSearchKeys.moveToTop(key)
 		performSegueWithIdentifier(Constants.SegueToMainTweetTableView, sender: self)
-//		tabBarController?.selectedIndex = 0
 	}
+
 }

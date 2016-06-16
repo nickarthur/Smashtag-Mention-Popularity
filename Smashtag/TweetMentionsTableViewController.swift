@@ -7,16 +7,32 @@
 //
 
 import UIKit
-import Twitter
 
 private struct Constants {
 	static let cellReuseIdentifierForImages = "TweetMediaCell"
 	static let cellReuseIdentifierStandard = "TweetMentionsTableViewCell"
 	static let SegueToMainTweetTableView = "ToMainTweetTableView"
+	static let SegueToImageView = "ToImageView"
 }
 
 protocol NeedsTweet {
 	weak var tweet: Tweet? { get set }
+}
+
+@objc protocol BridgeMentionAndUser {
+	var keywordOrScreenName: String { get }
+}
+
+extension Mention: BridgeMentionAndUser {
+	var keywordOrScreenName: String {
+		return keyword
+	}
+}
+
+extension User: BridgeMentionAndUser {
+	var keywordOrScreenName: String {
+		return "@" + screenName
+	}
 }
 
 class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
@@ -25,9 +41,9 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
 	
 	private enum TweetMention: CustomStringConvertible {
 		case Media([MediaItem])
-		case Hashtags([Mention])
-		case Urls([Mention])
-		case UserMentions([Mention])
+		case Hashtags([BridgeMentionAndUser])
+		case Urls([BridgeMentionAndUser])
+		case UserMentions([BridgeMentionAndUser])
 		
 		var count: Int {
 			switch self {
@@ -38,7 +54,7 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
 			}
 		}
 		
-		var mentions: [Mention] {
+		var mentions: [BridgeMentionAndUser] {
 			switch self {
 			case .Hashtags(let items): return items
 			case .Urls(let items): return items
@@ -52,7 +68,7 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
 			case .Media: return "Media"
 			case .Hashtags: return "Hashtags"
 			case .Urls: return "URLs"
-			case .UserMentions: return "UserMentions"
+			case .UserMentions: return "User + UserMentions"
 			}
 		}
 	}
@@ -72,15 +88,14 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
 			if !tweet.urls.isEmpty {
 				tweetMentions.append(TweetMention.Urls(tweet.urls))
 			}
-			if !tweet.userMentions.isEmpty {
-				tweetMentions.append(TweetMention.UserMentions(tweet.userMentions))
-			}
+			var mentionsAndUser: [BridgeMentionAndUser] = tweet.userMentions
+			mentionsAndUser = [tweet.user] + mentionsAndUser
+			tweetMentions.append(TweetMention.UserMentions(mentionsAndUser))
 		}
     }
 
 
     // MARK: - Table view data source
-
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return tweetMentions.count
     }
@@ -88,7 +103,6 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return tweetMentions[section].count
     }
-
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let tweetMention = tweetMentions[indexPath.section]
@@ -102,7 +116,7 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
 		default:
 			let mention = tweetMention.mentions[indexPath.row]
 			let cell = tableView.dequeueReusableCellWithIdentifier(Constants.cellReuseIdentifierStandard, forIndexPath: indexPath)
-			cell.textLabel?.text = mention.keyword
+			cell.textLabel?.text = mention.keywordOrScreenName
 			return cell
 		}
     }
@@ -115,19 +129,26 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
 	{
 		let tweetMention = tweetMentions[indexPath.section]
 		switch tweetMention {
-		case .Media(let mediaItems): break
-		case .UserMentions, .Hashtags:
+		case .Media:
+			let cell = tableView.cellForRowAtIndexPath(indexPath) as! TweetMediaTableViewCell
+			performSegueWithIdentifier(Constants.SegueToImageView, sender: cell)
+		case .UserMentions:
 			let mentions = tweetMention.mentions
-			let keyWord = mentions[indexPath.row].keyword
-			recentSearchKeys.addSearchKey(keyWord)
+			var keyword = mentions[indexPath.row].keywordOrScreenName
+			keyword = keyword + " OR from:" + keyword
+			recentSearchKeys.addSearchKey(keyword)
+			performSegueWithIdentifier(Constants.SegueToMainTweetTableView, sender: self)
+		case .Hashtags:
+			let mentions = tweetMention.mentions
+			let keyword = mentions[indexPath.row].keywordOrScreenName
+			recentSearchKeys.addSearchKey(keyword)
 			performSegueWithIdentifier(Constants.SegueToMainTweetTableView, sender: self)
 		case .Urls(let mentions):
-			let urlString = mentions[indexPath.row].keyword
+			let urlString = mentions[indexPath.row].keywordOrScreenName
 			if let url = NSURL(string: urlString) {
 				UIApplication.sharedApplication().openURL(url)
 			}
 		}
-
 	}
 	
 	override func tableView(tableView: UITableView,
@@ -141,16 +162,31 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
 			return UITableViewAutomaticDimension
 		}
 	}
-
-
-    /*
+	
+	@IBAction private func popToRootViewController(sender: UIBarButtonItem) {
+		navigationController?.popToRootViewControllerAnimated(true)
+	}
+	
     // MARK: - Navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
+	{
+		guard let identifier = segue.identifier else { return }
+		switch identifier {
+		case Constants.SegueToImageView:
+			if var vc = segue.destinationViewController.contentViewController as? NeedsMediaItem
+			{	if let cell = sender as? TweetMediaTableViewCell {
+					vc.image = cell.tweetImageView.image
+				}
+			}
+		case Constants.SegueToMainTweetTableView:
+			if let vc = segue.destinationViewController.contentViewController as? TweetTableViewController
+			{	vc.searchTextFromSegue = recentSearchKeys.last
+				recentSearchKeys.removeAtIndex(0)
+			}
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+		default: break
+		}
     }
-    */
+
 
 }
