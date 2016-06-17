@@ -81,47 +81,49 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 		}
 	}
 	
+	override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
+		let temp = rowCount
+		rowCount = columnCount
+		columnCount = temp
+		collectionView?.collectionViewLayout.invalidateLayout()
+	}
 	
 	func scale(gesture: UIPinchGestureRecognizer) {
-		struct WhereToGo {
-			enum Directions {
-				case Horizontal, Vertical, Diagonal
-			}
-			static var direction = Directions.Diagonal
-		}
-		
+		var startLocationFinger1 = CGPoint()
+		var startLocationFinger2 = CGPoint()
+
 		switch gesture.state {
-		case .Began:
-			if gesture.numberOfTouches() == 2 {
-				let location1 = gesture.locationOfTouch(0, inView: collectionView)
-				let location2 = gesture.locationOfTouch(1, inView: collectionView)
-				let relX = abs(location2.x - location1.x) / collectionView!.bounds.width
-				let relY = abs(location2.y - location1.y) / collectionView!.bounds.height
-				if relX < 0.1 {
-					WhereToGo.direction = .Vertical
-				} else if relY < 0.1 {
-					WhereToGo.direction = .Horizontal
-				} else {
-					WhereToGo.direction = .Diagonal
-				}
-			}
+		case .Began:  	// how to handle more then 2 fingers?
+			startLocationFinger1 = gesture.locationOfTouch(0, inView: collectionView)
+			startLocationFinger2 = gesture.locationOfTouch(1, inView: collectionView)
+			
 		case .Changed:
-			if gesture.scale > 1.5 || gesture.scale < 0.667 {
-				switch WhereToGo.direction {
-				case .Horizontal:
-					columnCount = gesture.scale > 1.5 ? columnCount - 1 : columnCount + 1
-				case .Vertical:
-					rowCount = gesture.scale > 1.5 ? rowCount - 1 : rowCount + 1
-				case .Diagonal:
-					columnCount = gesture.scale > 1.5 ? columnCount - 1 : columnCount + 1
-					rowCount = gesture.scale > 1.5 ? rowCount - 1 : rowCount + 1
-					collectionView?.collectionViewLayout.invalidateLayout()
+			if gesture.scale > 1.25 || gesture.scale < 0.85 {
+				let targetFinger1 = gesture.locationOfTouch(0, inView: collectionView)
+				let targetFinger2 = gesture.locationOfTouch(1, inView: collectionView)
+				
+				let deltaX = abs((startLocationFinger1.x - startLocationFinger2.x) -
+								 (targetFinger1.x - targetFinger2.x))
+				let deltaY = abs((startLocationFinger1.y - startLocationFinger2.y) -
+								 (targetFinger1.y - targetFinger2.y))
+				let deltaXY = deltaX / deltaY
+				
+				switch deltaXY {
+				case 0..<0.4: 				// y movement > 2.5 * x movement
+					rowCount = gesture.scale > 1 ? rowCount - 1 : rowCount + 1
+				case 0.4..<3.0:				// x movement > 3 * y movement
+					columnCount = gesture.scale > 1 ? columnCount - 1 : columnCount + 1
+					rowCount = gesture.scale > 1 ? rowCount - 1 : rowCount + 1
+				default:
+					columnCount = gesture.scale > 1 ? columnCount - 1 : columnCount + 1
 				}
+				
+				startLocationFinger1 = targetFinger1
+				startLocationFinger2 = targetFinger2
+
 				gesture.scale = 1.0
 				collectionView?.collectionViewLayout.invalidateLayout()
 			}
-		case .Ended:
-			WhereToGo.direction = .Diagonal
 		default: break
 		}
 	}

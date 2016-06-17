@@ -58,7 +58,7 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 			self.searchText = searchText
 			searchTextFromSegue = nil
 			// media item button...
-			navigationItem.rightBarButtonItems?.removeLast()
+//			navigationItem.rightBarButtonItems?.removeLast()
 			
 		} else {
 			let mostRecentSearchKey = recentSearchKeys.last
