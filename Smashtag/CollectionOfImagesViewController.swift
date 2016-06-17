@@ -69,7 +69,7 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 		collectionViewFlowLayout = UICollectionViewFlowLayout()
 		
 		self.installsStandardGestureForInteractiveMovement = true
-		collectionView?.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(CollectionOfImagesViewController.scale(_:))))
+		collectionView?.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(CollectionOfImagesViewController.scaleCollectionViewGrid(_:))))
 		
 		let stopBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Stop,
 		                                        target: self,
@@ -81,6 +81,10 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 		}
 	}
 	
+	override func viewWillAppear(animated: Bool) {
+		collectionView?.collectionViewLayout.invalidateLayout()
+	}
+	
 	override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
 		let temp = rowCount
 		rowCount = columnCount
@@ -88,7 +92,7 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 		collectionView?.collectionViewLayout.invalidateLayout()
 	}
 	
-	func scale(gesture: UIPinchGestureRecognizer) {
+	func scaleCollectionViewGrid(gesture: UIPinchGestureRecognizer) {
 		var startLocationFinger1 = CGPoint()
 		var startLocationFinger2 = CGPoint()
 
@@ -98,32 +102,31 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 			startLocationFinger2 = gesture.locationOfTouch(1, inView: collectionView)
 			
 		case .Changed:
-			if gesture.scale > 1.25 || gesture.scale < 0.85 {
-				let targetFinger1 = gesture.locationOfTouch(0, inView: collectionView)
-				let targetFinger2 = gesture.locationOfTouch(1, inView: collectionView)
-				
-				let deltaX = abs((startLocationFinger1.x - startLocationFinger2.x) -
-								 (targetFinger1.x - targetFinger2.x))
-				let deltaY = abs((startLocationFinger1.y - startLocationFinger2.y) -
-								 (targetFinger1.y - targetFinger2.y))
-				let deltaXY = deltaX / deltaY
-				
-				switch deltaXY {
-				case 0..<0.4: 				// y movement > 2.5 * x movement
-					rowCount = gesture.scale > 1 ? rowCount - 1 : rowCount + 1
-				case 0.4..<3.0:
-					columnCount = gesture.scale > 1 ? columnCount - 1 : columnCount + 1
-					rowCount = gesture.scale > 1 ? rowCount - 1 : rowCount + 1
-				default:					// x movement > 3 * y movement
-					columnCount = gesture.scale > 1 ? columnCount - 1 : columnCount + 1
-				}
-				
-				startLocationFinger1 = targetFinger1
-				startLocationFinger2 = targetFinger2
-
-				gesture.scale = 1.0
-				collectionView?.collectionViewLayout.invalidateLayout()
+			guard gesture.scale > 1.25 || gesture.scale < 0.85 else { break }
+			let targetFinger1 = gesture.locationOfTouch(0, inView: collectionView)
+			let targetFinger2 = gesture.locationOfTouch(1, inView: collectionView)
+			
+			let deltaX = abs((startLocationFinger1.x - startLocationFinger2.x) -
+							 (targetFinger1.x - targetFinger2.x))
+			let deltaY = abs((startLocationFinger1.y - startLocationFinger2.y) -
+							 (targetFinger1.y - targetFinger2.y))
+			let deltaXY = deltaX / deltaY
+			
+			switch deltaXY {
+			case 0..<0.4: 				// y movement > 2.5 * x movement
+				rowCount = gesture.scale > 1 ? rowCount - 1 : rowCount + 1
+			case 0.4..<3.0:
+				columnCount = gesture.scale > 1 ? columnCount - 1 : columnCount + 1
+				rowCount = gesture.scale > 1 ? rowCount - 1 : rowCount + 1
+			default:					// x movement > 3 * y movement
+				columnCount = gesture.scale > 1 ? columnCount - 1 : columnCount + 1
 			}
+			
+			startLocationFinger1 = targetFinger1
+			startLocationFinger2 = targetFinger2
+
+			gesture.scale = 1.0
+			collectionView?.collectionViewLayout.invalidateLayout()
 		default: break
 		}
 	}
@@ -175,23 +178,13 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 	
 	private var columnCount: CGFloat = 2 {
 		didSet {
-			if columnCount < 1 {
-				columnCount = 1
-			}
-			else if columnCount > Constants.MaxColumnCount {
-				columnCount = Constants.MaxColumnCount
-			}
+			columnCount = min(max(columnCount, 1), Constants.MaxColumnCount)
 		}
 	}
 
 	private var rowCount: CGFloat = 3 {
 		didSet {
-			if rowCount < 1 {
-				rowCount = 1
-			}
-			else if rowCount > Constants.MaxRowCount {
-				rowCount = Constants.MaxRowCount
-			}
+			rowCount = min(max(rowCount, 1), Constants.MaxRowCount)
 		}
 	}
 	
@@ -199,8 +192,7 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 
 		let width = (collectionView.bounds.width - (columnCount - 1) * 2) / columnCount
 		let height = (collectionView.bounds.height - (rowCount - 1) * 2) / rowCount
-		let cgSize = CGSize(width: width, height: height)
-		return cgSize
+		return CGSize(width: width, height: height)
 	}
 	
 	func collectionView(collectionView: UICollectionView,
