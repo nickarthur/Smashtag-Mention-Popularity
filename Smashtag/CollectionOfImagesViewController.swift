@@ -111,10 +111,10 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 				switch deltaXY {
 				case 0..<0.4: 				// y movement > 2.5 * x movement
 					rowCount = gesture.scale > 1 ? rowCount - 1 : rowCount + 1
-				case 0.4..<3.0:				// x movement > 3 * y movement
+				case 0.4..<3.0:
 					columnCount = gesture.scale > 1 ? columnCount - 1 : columnCount + 1
 					rowCount = gesture.scale > 1 ? rowCount - 1 : rowCount + 1
-				default:
+				default:					// x movement > 3 * y movement
 					columnCount = gesture.scale > 1 ? columnCount - 1 : columnCount + 1
 				}
 				
