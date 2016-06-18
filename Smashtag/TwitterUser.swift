@@ -1,5 +1,5 @@
 //
-//  Tweet.swift
+//  TwitterUser.swift
 //  Smashtag
 //
 //  Created by Michel Deiman on 18/06/16.
@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 
-class Tweet: NSManagedObject {
+class TwitterUser: NSManagedObject {
 
 // Insert code here to add functionality to your managed object subclass
 

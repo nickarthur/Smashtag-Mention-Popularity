@@ -1,16 +1,20 @@
 //
-//  Created by Michel Deiman on 09/06/16.
+//  TweetMediaTableViewCell.swift
+//  Smashtag
 //
+//  Created by Michel Deiman on 18/06/16.
+//  Copyright © 2016 Michel Deiman. All rights reserved.
 //
 
 
 import UIKit
+import Twitter
 
 class TweetMediaTableViewCell: UITableViewCell {
 	
 	@IBOutlet weak var tweetImageView: UIImageView!
 	@IBOutlet weak var spinner: UIActivityIndicatorView!
-
+	
 	weak var mediaItem: MediaItem? {
 		didSet {
 			updateUI()
@@ -24,12 +28,12 @@ class TweetMediaTableViewCell: UITableViewCell {
 		{	let imageData = NSData(contentsOfURL: url)
 			dispatch_async(dispatch_get_main_queue())
 			{	if url == self.mediaItem?.url {
-					if imageData != nil {
-						self.tweetImageView?.image = UIImage(data: imageData!)
-					} else {
-						self.tweetImageView?.image = nil
-					}
-					self.spinner?.stopAnimating()
+				if imageData != nil {
+					self.tweetImageView?.image = UIImage(data: imageData!)
+				} else {
+					self.tweetImageView?.image = nil
+				}
+				self.spinner?.stopAnimating()
 				}
 			}
 		}
