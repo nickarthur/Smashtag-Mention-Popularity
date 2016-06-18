@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Twitter
 
 extension NSCache {
 	subscript(key: AnyObject) -> AnyObject? {

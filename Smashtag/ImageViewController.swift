@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 protocol NeedsMediaItem {
 	weak var image: UIImage? { get set }
 }

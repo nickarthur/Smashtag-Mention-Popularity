@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Twitter
 
 private struct Constants {
 	static let cellReuseIdentifierForImages = "TweetMediaCell"
