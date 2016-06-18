@@ -11,7 +11,7 @@
             <objects>
                 <collectionViewController id="0WF-h5-3am" customClass="CollectionOfImagesViewController" customModule="Smashtag" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="redraw" dataMode="prototypes" id="UqE-40-tVj">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="B2w-9P-cov">
                             <size key="itemSize" width="179" height="171"/>
@@ -27,17 +27,19 @@
                                     <rect key="frame" x="0.0" y="0.0" width="179" height="171"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="lS8-sJ-cWE">
+                                            <rect key="frame" x="71" y="67" width="37" height="37"/>
+                                        </activityIndicatorView>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dgO-0N-VIN">
                                             <rect key="frame" x="0.0" y="0.0" width="179" height="171"/>
                                         </imageView>
-                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="lS8-sJ-cWE">
-                                            <rect key="frame" x="79" y="76" width="20" height="20"/>
-                                        </activityIndicatorView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <constraints>
                                     <constraint firstItem="dgO-0N-VIN" firstAttribute="leading" secondItem="Xkf-d0-5AE" secondAttribute="leading" id="7gW-v3-jUt"/>
+                                    <constraint firstItem="lS8-sJ-cWE" firstAttribute="centerY" secondItem="dgO-0N-VIN" secondAttribute="centerY" id="J45-MR-GZo"/>
+                                    <constraint firstItem="lS8-sJ-cWE" firstAttribute="centerX" secondItem="dgO-0N-VIN" secondAttribute="centerX" id="J8e-7k-R9Z"/>
                                     <constraint firstItem="dgO-0N-VIN" firstAttribute="top" secondItem="Xkf-d0-5AE" secondAttribute="top" id="nsv-Kd-BY5"/>
                                     <constraint firstAttribute="trailing" secondItem="dgO-0N-VIN" secondAttribute="trailing" id="oFQ-WQ-OUj"/>
                                     <constraint firstAttribute="bottom" secondItem="dgO-0N-VIN" secondAttribute="bottom" id="zvx-li-gok"/>
@@ -113,7 +115,7 @@
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="egm-vr-Kjd">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="1000" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="egm-vr-Kjd">
                                                             <rect key="frame" x="0.0" y="20" width="514" height="150"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -173,7 +175,7 @@
             <objects>
                 <tableViewController id="RS0-pZ-QGs" customClass="TweetMentionsTableViewController" customModule="Smashtag" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Qd5-Nt-aZ7">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -296,10 +298,10 @@
                         <viewControllerLayoutGuide type="bottom" id="ozm-kC-Nxz"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="HpO-y8-SCB">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.10000000000000001" maximumZoomScale="5" translatesAutoresizingMaskIntoConstraints="NO" id="wGG-rl-sFt">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" minimumZoomScale="0.10000000000000001" maximumZoomScale="5" translatesAutoresizingMaskIntoConstraints="NO" id="wGG-rl-sFt">
                                 <rect key="frame" x="0.0" y="20" width="600" height="531"/>
                                 <connections>
                                     <outlet property="delegate" destination="kqY-D7-bkK" id="vfW-WO-TeD"/>
@@ -393,6 +395,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="f3D-wn-IkT"/>
+        <segue reference="q5M-1h-XmZ"/>
     </inferredMetricsTieBreakers>
 </document>

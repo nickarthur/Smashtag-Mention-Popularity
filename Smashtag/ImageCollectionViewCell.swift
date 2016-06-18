@@ -10,28 +10,26 @@ import UIKit
 
 class ImageCollectionViewCell: UICollectionViewCell {
 	
-	@IBOutlet weak var imageView: UIImageView!
+	@IBOutlet private weak var imageView: UIImageView!
 	
 	var tweet: Tweet?
 	var mediaItem: MediaItem? {
 		didSet {
 			fetchImage()
-			self.spinner?.stopAnimating()
+			spinner?.stopAnimating()
 		}
 	}
-	
 	var cache: NSCache?
-	@IBOutlet weak var spinner: UIActivityIndicatorView!
+	
+	@IBOutlet private weak var spinner: UIActivityIndicatorView!
 	
 	private func fetchImage() {
 		guard let url = mediaItem?.url else { return }
 		spinner?.startAnimating()
-		
 		if let imageData = cache?[url] as? NSData {
 			imageView.image = UIImage(data: imageData)
 			return
 		}
-		
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0))
 		{	let imageData = NSData(contentsOfURL: url)
 			dispatch_async(dispatch_get_main_queue())

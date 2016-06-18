@@ -181,7 +181,7 @@ class TweetMentionsTableViewController: UITableViewController, NeedsTweet {
 		case Constants.SegueToMainTweetTableView:
 			if let vc = segue.destinationViewController.contentViewController as? TweetTableViewController
 			{	vc.searchTextFromSegue = recentSearchKeys.last
-				recentSearchKeys.removeAtIndex(0)
+//				recentSearchKeys.removeAtIndex(0)
 			}
 
 		default: break
