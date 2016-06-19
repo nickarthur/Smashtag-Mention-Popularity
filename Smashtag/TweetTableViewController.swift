@@ -8,10 +8,18 @@
 
 import UIKit
 import Twitter
+import CoreData
 
 class TweetTableViewController: UITableViewController, UITextFieldDelegate
 {
-	private var tweets = [Array<Tweet>]()
+	// MARK: Model
+	
+	var managedObjectContext: NSManagedObjectContext? {
+		let delegate = UIApplication.sharedApplication().delegate
+		return (delegate as? AppDelegate)?.managedObjectContext
+	}
+	
+	private var tweets = [[Tweet]]()
 	
 	var searchTextFromSegue: String?
 	
@@ -130,17 +138,43 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 		lastTwitterRequest = request
 		request.fetchTweets { [weak weakSelf = self] newTweets in
 			dispatch_async(dispatch_get_main_queue()) {
-				if newTweets.count > 0 {
+				if !newTweets.isEmpty {
 					weakSelf?.tweets.insert(newTweets, atIndex: 0)
 					weakSelf?.tableView.reloadData()
 					weakSelf?.tableView.reloadSections(NSIndexSet(indexesInRange:
 						NSMakeRange(0, self.tableView.numberOfSections)),
 						withRowAnimation: .None)
+					weakSelf?.updateDatabase(newTweets)
 					sender?.endRefreshing()
 					self.title = self.searchText
 				}
 				sender?.endRefreshing()
 			}
+		}
+	}
+	
+	private func updateDatabase(newTweets: [Tweet])
+	{
+		managedObjectContext?.performBlock {
+			for twitterInfo in newTweets {
+				// _ = : show clearly to say that we are not interested in return value
+				_ = TweetM.tweetWith(twitterInfo, inManagedObjectContext: self.managedObjectContext!)
+				guard let _ = try? self.managedObjectContext?.save() else { break }
+				// error not handled...
+			}
+		}
+		printDatabaseStatistics()
+		print("done printing printDatabaseStatistics")
+	}
+	
+	func printDatabaseStatistics() {
+		managedObjectContext?.performBlock
+		{	if let results = try? self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "UserM"))
+			{	print("\(results.count) TwitterUsers")
+			}
+			// a more efficient way to count objects. No need to fetch objects, but count them in database.
+			let tweetMCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "TweetM"), error: nil)
+			print(tweetMCount, " TweetM")
 		}
 	}
 	

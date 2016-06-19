@@ -1,8 +1,8 @@
 //
-//  TwitterUser+CoreDataProperties.swift
+//  UserM+CoreDataProperties.swift
 //  Smashtag
 //
-//  Created by Michel Deiman on 18/06/16.
+//  Created by Michel Deiman on 19/06/16.
 //  Copyright © 2016 Michel Deiman. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -12,7 +12,7 @@
 import Foundation
 import CoreData
 
-extension TwitterUser {
+extension UserM {
 
     @NSManaged var name: String?
     @NSManaged var screenName: String?
