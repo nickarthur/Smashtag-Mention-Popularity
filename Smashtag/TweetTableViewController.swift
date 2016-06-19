@@ -174,7 +174,9 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 			}
 			// a more efficient way to count objects. No need to fetch objects, but count them in database.
 			let tweetMCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "TweetM"), error: nil)
-			print(tweetMCount, " TweetM")
+			print(tweetMCount, " Tweets")
+			let mentionsCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "MentionM"), error: nil)
+			print(mentionsCount, " Mentions")
 		}
 	}
 	

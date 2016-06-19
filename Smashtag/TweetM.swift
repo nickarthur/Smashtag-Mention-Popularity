@@ -26,6 +26,14 @@ class TweetM: NSManagedObject {
 				tweetM.text = twitterInfo.text
 				tweetM.created = twitterInfo.created
 				tweetM.tweeter = UserM.twitterUserWith(twitterInfo.user, inManagedObjectContext: context)
+				
+				let twitterMentions = twitterInfo.hashtags + twitterInfo.userMentions
+				for mention in twitterMentions {
+					if let mentionM = MentionM.tweetWith(mention, inManagedObjectContext: context) {
+						let object = tweetM.mutableSetValueForKey("mentions")
+						object.addObject(mentionM)
+					}
+				}
 				return tweetM
 			}
 		}
@@ -34,3 +42,6 @@ class TweetM: NSManagedObject {
 	
 	
 }
+
+
+

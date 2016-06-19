@@ -13,6 +13,7 @@ private struct Constants {
 	static let KeyForRecentSearches = "RecentSearchKeys"
 	static let cellReuseIdentifier = "Recents"
 	static let SegueToMainTweetTableView = "ToMainTweetTableView"
+	static let SegueToPopularMentions = "toPopularMentions"
 }
 
 class RecentSearchKeys {
@@ -128,5 +129,19 @@ class RecentsTableViewController: UITableViewController {
 		recentSearchKeys.moveToTop(key)
 		performSegueWithIdentifier(Constants.SegueToMainTweetTableView, sender: self)
 	}
+	
+	override func tableView(tableView: UITableView, accessoryButtonTappedForRowWithIndexPath indexPath: NSIndexPath) {
+		performSegueWithIdentifier(Constants.SegueToPopularMentions, sender: indexPath)
+	}
 
+	
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		guard let identifier = segue.identifier where identifier == Constants.SegueToPopularMentions
+			else { return }
+		if let vc = segue.destinationViewController.contentViewController as? MentionersTableViewController, let indexPath = sender as? NSIndexPath
+
+		{	vc.mention = recentSearchKeys[indexPath.row]
+		}
+	}
+	
 }

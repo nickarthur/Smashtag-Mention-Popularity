@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15G12a" minimumToolsVersion="Xcode 7.0">
+    <entity name="MentionM" representedClassName=".MentionM" syncable="YES">
+        <attribute name="keyword" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="referees" optional="YES" attributeType="Integer 16" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="tweets" toMany="YES" deletionRule="Nullify" destinationEntity="TweetM" inverseName="mentions" inverseEntity="TweetM" syncable="YES"/>
+    </entity>
     <entity name="TweetM" representedClassName=".TweetM" syncable="YES">
         <attribute name="created" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="mentions" toMany="YES" deletionRule="Nullify" destinationEntity="MentionM" inverseName="tweets" inverseEntity="MentionM" syncable="YES"/>
         <relationship name="tweeter" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserM" inverseName="tweets" inverseEntity="UserM" syncable="YES"/>
     </entity>
     <entity name="UserM" representedClassName=".UserM" syncable="YES">
@@ -12,7 +18,8 @@
         <relationship name="tweets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TweetM" inverseName="tweeter" inverseEntity="TweetM" syncable="YES"/>
     </entity>
     <elements>
-        <element name="TweetM" positionX="-63" positionY="-18" width="128" height="103"/>
-        <element name="UserM" positionX="-317" positionY="-9" width="128" height="88"/>
+        <element name="MentionM" positionX="-405" positionY="-63" width="128" height="88"/>
+        <element name="TweetM" positionX="-11" positionY="-270" width="128" height="118"/>
+        <element name="UserM" positionX="-407" positionY="-243" width="128" height="88"/>
     </elements>
 </model>
