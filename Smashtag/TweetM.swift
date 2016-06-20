@@ -10,10 +10,18 @@ import Foundation
 import CoreData
 import Twitter
 
+extension TweetM {
+	
+	@NSManaged var created: NSDate?
+	@NSManaged var id: String?
+	@NSManaged var text: String?
+	@NSManaged var tweeter: UserM?
+	@NSManaged var mentions: NSSet
+}
 
 class TweetM: NSManagedObject {
 
-	class func tweetWith(twitterInfo: Tweet, inManagedObjectContext context: NSManagedObjectContext) -> TweetM?
+	class func tweetWith(twitterInfo: Tweet, forSearchTerm key: String, inManagedObjectContext context: NSManagedObjectContext) -> TweetM?
 	{
 		let request = NSFetchRequest(entityName: "TweetM")
 		request.predicate = NSPredicate(format: "id = %@", twitterInfo.id)
@@ -29,9 +37,9 @@ class TweetM: NSManagedObject {
 				
 				let twitterMentions = twitterInfo.hashtags + twitterInfo.userMentions
 				for mention in twitterMentions {
-					if let mentionM = MentionM.tweetWith(mention, inManagedObjectContext: context) {
-						let object = tweetM.mutableSetValueForKey("mentions")
-						object.addObject(mentionM)
+					if let mentionM = MentionM.tweetWith(mention, forSearchTerm: key, inManagedObjectContext: context) {
+						let mentions = tweetM.mutableSetValueForKey("mentions")
+						mentions.addObject(mentionM)
 					}
 				}
 				return tweetM

@@ -322,6 +322,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="a8d-SJ-87B" kind="show" identifier="ToMainTweetTableView" id="z72-KG-klL"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -440,6 +443,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="s2o-Q3-rZk"/>
+        <segue reference="z72-KG-klL"/>
     </inferredMetricsTieBreakers>
 </document>

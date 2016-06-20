@@ -10,6 +10,11 @@ import Foundation
 import CoreData
 import Twitter
 
+extension UserM {
+	@NSManaged var name: String?
+	@NSManaged var screenName: String?
+	@NSManaged var tweets: NSSet?
+}
 
 class UserM: NSManagedObject {
 

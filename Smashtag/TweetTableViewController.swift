@@ -156,10 +156,13 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 	private func updateDatabase(newTweets: [Tweet])
 	{
 		managedObjectContext?.performBlock {
-			for twitterInfo in newTweets {
-				// _ = : show clearly to say that we are not interested in return value
-				_ = TweetM.tweetWith(twitterInfo, inManagedObjectContext: self.managedObjectContext!)
-				guard let _ = try? self.managedObjectContext?.save() else { break }
+			for tweet in newTweets {
+				_ = TweetM.tweetWith(tweet, forSearchTerm: self.searchText!, inManagedObjectContext: self.managedObjectContext!)
+				guard let _ = try? self.managedObjectContext?.save()
+				else {
+					print("not saved...")
+					break
+				}
 				// error not handled...
 			}
 		}
@@ -177,6 +180,8 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 			print(tweetMCount, " Tweets")
 			let mentionsCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "MentionM"), error: nil)
 			print(mentionsCount, " Mentions")
+			let searchTermCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "SearchTerm"), error: nil)
+			print(searchTermCount, " searchTermCount")
 		}
 	}
 	
