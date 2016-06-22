@@ -43,13 +43,15 @@ class MentionersTableViewController: CoreDataTableViewController
 		if let context = managedObjectContext where mention?.isEmpty != true {
 			let request = NSFetchRequest(entityName: "SearchTerm")
 			request.predicate = NSPredicate(format: "keyword LIKE[cd] %@ AND count > %@", mention!, "1")
-			let sortDescriptorA = NSSortDescriptor(key: "count", ascending: false)
-			let sortDescriptorB = NSSortDescriptor(key: "mention.keyword", ascending: false)
-			request.sortDescriptors = [sortDescriptorB, sortDescriptorA]
+
+			let sortDescriptorA = NSSortDescriptor(key: "mention.type", ascending: true,  selector: #selector(NSString.localizedStandardCompare(_:)))
+			let sortDescriptorB = NSSortDescriptor(key: "count", ascending: false)
+			let sortDescriptorC = NSSortDescriptor(key: "mention.keyword", ascending: true,  selector: #selector(NSString.localizedStandardCompare(_:)))
+			request.sortDescriptors = [sortDescriptorA, sortDescriptorB, sortDescriptorC]
 			fetchedResultsController = NSFetchedResultsController(
 				fetchRequest: request,
 				managedObjectContext: context,
-				sectionNameKeyPath: nil,
+				sectionNameKeyPath: "mention.type",
 				cacheName: nil)
 			
 		} else {

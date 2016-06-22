@@ -27,7 +27,6 @@ class SearchTerm: NSManagedObject
 			searchM.mention = mention
 			return searchM
 		}
-		print("return nil...!!!!!!!!!!")
 		return nil
 	}
 

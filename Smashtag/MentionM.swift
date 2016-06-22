@@ -13,13 +13,14 @@ import Twitter
 extension MentionM {
 	
 	@NSManaged var keyword: String
+	@NSManaged var type: String
 	@NSManaged var mentioned: NSSet
 	@NSManaged var tweets: NSSet
 }
 
 class MentionM: NSManagedObject {
 	
-	class func tweetWith(mentionInfo: Mention, forSearchTerm key: String, inManagedObjectContext context: NSManagedObjectContext) -> MentionM?
+	class func tweetWith(mentionInfo: Mention, mentionType: String, forSearchTerm key: String, inManagedObjectContext context: NSManagedObjectContext) -> MentionM?
 	{
 		let request = NSFetchRequest(entityName: "MentionM")
 		request.predicate = NSPredicate(format: "keyword LIKE[cd] %@", mentionInfo.keyword)
@@ -29,11 +30,8 @@ class MentionM: NSManagedObject {
 			request.predicate = NSPredicate(format: "keyword LIKE[cd] %@ AND mention == %@", key, mentionM)
 			if let searchM = (try? context.executeFetchRequest(request))?.first as? SearchTerm {
 				searchM.count = searchM.count.integerValue + 1
-				print("SearchTerm found...")
-			} else {
-				print("!!!!!SearchTerm not found.!!!!!!! for mention: ", mentionM.keyword, "key: ", key)
-				// create one anyway? no ..! An instance is created together with MentionM
-				if let searchM = SearchTerm.statisticsFor(key, mention: mentionM, inManagedObjectContext: context) {
+			} else
+			{	if let searchM = SearchTerm.statisticsFor(key, mention: mentionM, inManagedObjectContext: context) {
 					let mentioned = mentionM.mutableSetValueForKey("mentioned")
 					mentioned.addObject(searchM)
 				}
@@ -44,6 +42,8 @@ class MentionM: NSManagedObject {
 			if let mentionM = NSEntityDescription.insertNewObjectForEntityForName("MentionM", inManagedObjectContext: context) as? MentionM
 			{
 				mentionM.keyword = mentionInfo.keyword
+				mentionM.type = mentionType
+//				mentionM.type = mentionInfo.keyword.hasPrefix("#") ? 1 : 0
 				if let searchM = SearchTerm.statisticsFor(key, mention: mentionM, inManagedObjectContext: context) {
 					let mentioned = mentionM.mutableSetValueForKey("mentioned")
 					mentioned.addObject(searchM)

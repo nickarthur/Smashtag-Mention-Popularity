@@ -106,6 +106,7 @@
 				TargetAttributes = {
 					DAB79D141BD20B7900448104 = {
 						CreatedOnToolsVersion = 7.0.1;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -257,6 +258,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 2.3;
 			};
 			name = Debug;
 		};
@@ -274,6 +276,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.cs193p.instructor.Twitter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 2.3;
 			};
 			name = Release;
 		};

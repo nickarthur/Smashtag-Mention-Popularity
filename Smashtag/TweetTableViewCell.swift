@@ -14,7 +14,12 @@ class TweetTableViewCell: UITableViewCell {
 	
 	@IBOutlet weak var tweetScreenNameLabel: UILabel!
 	@IBOutlet weak var tweetTextLabel: UILabel!
-	@IBOutlet weak var tweetProfileImageview: UIImageView!
+	@IBOutlet weak var tweetProfileImageview: UIImageView! {
+		didSet {
+			tweetProfileImageview.layer.cornerRadius = 30
+			tweetProfileImageview.clipsToBounds = true
+		}
+	}
 	@IBOutlet weak var tweetCreatedLabel: UILabel!
 
 	var tweet: Tweet? {

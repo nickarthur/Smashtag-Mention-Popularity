@@ -66,14 +66,16 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 		if let searchText = searchTextFromSegue {
 			self.searchText = searchText
 			searchTextFromSegue = nil
-			// media item button...
-//			navigationItem.rightBarButtonItems?.removeLast()
 			
 		} else {
 			let mostRecentSearchKey = recentSearchKeys.last
 			searchText = mostRecentSearchKey
 		}
     }
+	
+	override func viewDidAppear(animated: Bool) {
+		searchTextField.resignFirstResponder()
+	}
 
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {

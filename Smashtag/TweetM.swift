@@ -19,6 +19,8 @@ extension TweetM {
 	@NSManaged var mentions: NSSet
 }
 
+
+
 class TweetM: NSManagedObject {
 
 	class func tweetWith(twitterInfo: Tweet, forSearchTerm key: String, inManagedObjectContext context: NSManagedObjectContext) -> TweetM?
@@ -35,11 +37,14 @@ class TweetM: NSManagedObject {
 				tweetM.created = twitterInfo.created
 				tweetM.tweeter = UserM.twitterUserWith(twitterInfo.user, inManagedObjectContext: context)
 				
-				let twitterMentions = twitterInfo.hashtags + twitterInfo.userMentions
-				for mention in twitterMentions {
-					if let mentionM = MentionM.tweetWith(mention, forSearchTerm: key, inManagedObjectContext: context) {
-						let mentions = tweetM.mutableSetValueForKey("mentions")
-						mentions.addObject(mentionM)
+				let twitterMentions = ["hashtags": twitterInfo.hashtags,
+				                       "userMentions": twitterInfo.userMentions]
+				for (type, mentions) in twitterMentions {
+					for mention in mentions {
+						if let mentionM = MentionM.tweetWith(mention, mentionType: type, forSearchTerm: key, inManagedObjectContext: context) {
+							let mentions = tweetM.mutableSetValueForKey("mentions")
+							mentions.addObject(mentionM)
+						}
 					}
 				}
 				return tweetM

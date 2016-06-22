@@ -2,6 +2,7 @@
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15G12a" minimumToolsVersion="Xcode 7.0">
     <entity name="MentionM" representedClassName=".MentionM" syncable="YES">
         <attribute name="keyword" attributeType="String" syncable="YES"/>
+        <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="mentioned" toMany="YES" deletionRule="Nullify" destinationEntity="SearchTerm" inverseName="mention" inverseEntity="SearchTerm" syncable="YES"/>
         <relationship name="tweets" toMany="YES" deletionRule="Nullify" destinationEntity="TweetM" inverseName="mentions" inverseEntity="TweetM" syncable="YES"/>
     </entity>
@@ -23,7 +24,7 @@
         <relationship name="tweets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TweetM" inverseName="tweeter" inverseEntity="TweetM" syncable="YES"/>
     </entity>
     <elements>
-        <element name="MentionM" positionX="-236" positionY="-243" width="128" height="88"/>
+        <element name="MentionM" positionX="-236" positionY="-243" width="128" height="105"/>
         <element name="SearchTerm" positionX="-468" positionY="-367" width="128" height="88"/>
         <element name="TweetM" positionX="-468" positionY="-154" width="128" height="118"/>
         <element name="UserM" positionX="-684" positionY="-297" width="128" height="88"/>
