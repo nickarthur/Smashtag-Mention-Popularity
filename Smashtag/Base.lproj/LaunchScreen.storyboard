@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G12a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G19a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" initialViewController="01J-lp-oVM">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -16,7 +16,77 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r9V-mZ-khl">
+                                <rect key="frame" x="166" y="157" width="60" height="21"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="DEIMAN">
+                                        <attributes>
+                                            <color key="NSColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="18" name="HelveticaNeue-UltraLight"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="truncatingTail" baseWritingDirection="leftToRight" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N0F-Od-Gt8">
+                                <rect key="frame" x="166" y="173" width="268.5" height="62.5"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="SMASHTAG">
+                                        <attributes>
+                                            <color key="NSColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="48" name="Futura-Medium"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2W2-2l-7r2">
+                                <rect key="frame" x="263" y="237" width="171.5" height="62.5"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="mention">
+                                        <attributes>
+                                            <color key="NSColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="48" name="Futura-Medium"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="right" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Ia-MG-dyQ">
+                                <rect key="frame" x="166" y="301" width="223.5" height="62.5"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="popularity">
+                                        <attributes>
+                                            <color key="NSColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="48" name="Futura-Medium"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="9Ia-MG-dyQ" firstAttribute="trailing" secondItem="N0F-Od-Gt8" secondAttribute="trailing" id="5bv-Wi-ArU"/>
+                            <constraint firstItem="N0F-Od-Gt8" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="6ZN-lV-63w"/>
+                            <constraint firstItem="2W2-2l-7r2" firstAttribute="trailing" secondItem="N0F-Od-Gt8" secondAttribute="trailing" id="Lct-Ff-3d7"/>
+                            <constraint firstItem="r9V-mZ-khl" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="137" id="OdD-eo-H65"/>
+                            <constraint firstItem="2W2-2l-7r2" firstAttribute="top" secondItem="N0F-Od-Gt8" secondAttribute="bottom" constant="1.5" id="PJR-rY-boe"/>
+                            <constraint firstItem="r9V-mZ-khl" firstAttribute="bottom" secondItem="N0F-Od-Gt8" secondAttribute="top" constant="5" id="PtI-6W-Vds"/>
+                            <constraint firstItem="9Ia-MG-dyQ" firstAttribute="leading" secondItem="N0F-Od-Gt8" secondAttribute="leading" id="by4-fc-UKD"/>
+                            <constraint firstItem="r9V-mZ-khl" firstAttribute="leading" secondItem="N0F-Od-Gt8" secondAttribute="leading" id="qHy-8K-jUk"/>
+                            <constraint firstItem="9Ia-MG-dyQ" firstAttribute="top" secondItem="2W2-2l-7r2" secondAttribute="bottom" constant="1.5" id="tQO-bG-uJo"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="5bv-Wi-ArU"/>
+                            </mask>
+                        </variation>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>

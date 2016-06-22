@@ -10,7 +10,7 @@ import UIKit
 import Twitter
 import CoreData
 
-class TweetTableViewController: UITableViewController, UITextFieldDelegate
+class TweetTableViewController: UITableViewController, UISearchBarDelegate
 {
 	// MARK: Model
 	
@@ -73,10 +73,10 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 		}
     }
 	
-	override func viewDidAppear(animated: Bool) {
+	override func viewWillDisappear(animated: Bool) {
 		searchTextField.resignFirstResponder()
 	}
-
+	
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return tweets.count
@@ -97,19 +97,41 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
     }
  
 	// MARK: tableView delegate method
+	// segue not directly from tableViewCell to other controller...
+	// use this as a cancel option for keyboard: resignFirstResponder()
+	override func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+		if searchTextField.isFirstResponder() {
+			searchTextField.resignFirstResponder()
+			return false
+		} else {
+			return true
+		}
+	}
+	
+	// Perform Segue ..
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
 	{	tweetForSegue = tweets[indexPath.section][indexPath.row]
 		performSegueWithIdentifier(Constants.SegueIdentifierToMentions, sender: self)
 	}
 	
-	@IBOutlet private weak var searchTextField: UITextField! {
+	@IBOutlet private weak var searchTextField: UISearchBar! {
 		didSet {
 			searchTextField.delegate = self
 			searchTextField.text = searchText
+			let cancelButton = searchTextField.valueForKey("cancelButton") as! UIButton
+			cancelButton.setTitle("Search", forState: .Normal)
 		}
 	}
 	
-	// MARK: UITextFieldDelegate method
+	// MARK: UISearchBarDelegate method !!!!!!!
+	// Not "Cancel, but 'Enter'-function !!!!!
+	// twitter keyboard has no enter key?
+	func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+		searchBar.resignFirstResponder()
+		searchText = searchBar.text
+		recentSearchKeys.addSearchKey(searchText!)
+	}
+	
 	func textFieldShouldReturn(textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		searchText = textField.text
@@ -172,12 +194,11 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 		print("done printing printDatabaseStatistics")
 	}
 	
-	func printDatabaseStatistics() {
+	private func printDatabaseStatistics() {
 		managedObjectContext?.performBlock
 		{	if let results = try? self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "UserM"))
 			{	print("\(results.count) TwitterUsers")
 			}
-			// a more efficient way to count objects. No need to fetch objects, but count them in database.
 			let tweetMCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "TweetM"), error: nil)
 			print(tweetMCount, " Tweets")
 			let mentionsCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "MentionM"), error: nil)
@@ -194,13 +215,6 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 	
 	// MARK: Segue methods and property
 	private var tweetForSegue: Tweet?
-	
-	override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
-		switch identifier {
-		case Constants.SegueIdentifierToMentions: return tweetForSegue != nil
-		default: return true
-		}
-	}
 	
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
 	{	guard let identifier = segue.identifier else { return }
