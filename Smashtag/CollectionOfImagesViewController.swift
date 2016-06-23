@@ -55,13 +55,13 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 		}
 	}
 	
-	struct TweetWithMedia {
+	private struct TweetWithMedia {
 		let tweet: Tweet
 		let mediaItem: MediaItem
 	}
 
-	var tweetsWithMedia: [TweetWithMedia] = []
-	var cache = NSCache()
+	private var tweetsWithMedia: [TweetWithMedia] = []
+	private var cache = NSCache()
 	
 	
     override func viewDidLoad() {
@@ -180,12 +180,14 @@ class CollectionOfImagesViewController: UICollectionViewController, UICollection
 	private var columnCount: CGFloat = 2 {
 		didSet {
 			columnCount = min(max(columnCount, 1), Constants.MaxColumnCount)
+			collectionView?.pagingEnabled = columnCount == 1 && rowCount == 1
 		}
 	}
 
 	private var rowCount: CGFloat = 3 {
 		didSet {
 			rowCount = min(max(rowCount, 1), Constants.MaxRowCount)
+			collectionView?.pagingEnabled = columnCount == 1 && rowCount == 1
 		}
 	}
 	

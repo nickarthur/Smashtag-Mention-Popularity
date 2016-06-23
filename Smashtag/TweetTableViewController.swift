@@ -123,13 +123,18 @@ class TweetTableViewController: UITableViewController, UISearchBarDelegate
 		}
 	}
 	
-	// MARK: UISearchBarDelegate method !!!!!!!
-	// Not "Cancel, but 'Enter'-function !!!!!
-	// twitter keyboard has no enter key?
-	func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+	// MARK: Delegate method from UISearchBarDelegate
+	func searchBarSearchButtonClicked(searchBar: UISearchBar) {
 		searchBar.resignFirstResponder()
 		searchText = searchBar.text
 		recentSearchKeys.addSearchKey(searchText!)
+	}
+	
+	// MARK: UISearchBarDelegate method !!!!!!!
+	// Not "Cancel, but 'Enter'-function !!!!!
+	// twitter keyboard has no enter key?  TEMPORARY SOLUTION
+	func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+		searchBarSearchButtonClicked(searchBar)
 	}
 	
 	func textFieldShouldReturn(textField: UITextField) -> Bool {

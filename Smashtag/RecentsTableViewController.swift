@@ -22,7 +22,8 @@ class RecentSearchKeys {
 	}
 	
 	var last: String {
-		return !isEmpty ? self[0] : "#stanford"
+		if isEmpty { addSearchKey("#stanford") }
+		return self[0]
 	}
 	
 	var count: Int {
